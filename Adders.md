@@ -1,7 +1,8 @@
 # Adders in Quantum Circuits
 
-## Initializations
+Quantum circuits are models for quantum computation in which a computation is a sequence of quantum gates. 
 
+## Initializations
 ```
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
 from qiskit import IBMQ, Aer, execute
@@ -15,8 +16,6 @@ from qiskit.visualization import plot_bloch_multivector
 # Loading your IBM Q account(s)
 IBMQ.load_account()
 ```
-
-Quantum circuits are models for quantum computation in which a computation is a sequence of quantum gates. 
 
 ## Quantum Gates
 
@@ -78,7 +77,7 @@ result = execute(qc, backend).result().get_statevector(qc, decimals=3)
 plot_bloch_multivector(result)
 ```
 
-## CX Gate (CNOT Gate)
+### CX Gate (CNOT Gate)
 
 The controlled NOT (or CNOT or CX) gate acts on two qubits. It performs the NOT operation (equivalent to applying an X gate) on the second qubit only when the first qubit is |1⟩ and otherwise leaves it unchanged. Note: Qiskit numbers the bits in a string from right to left.
 
@@ -129,3 +128,122 @@ qc.draw(output='mpl')
 ## Creating logical gates with quantum gates
 
 Now let's start creating a classic logic gate using quantum gates. Each gate and their truth tables will be shown. Here we denote quantum registers as 'q' and classical registers as 'c' where we encode the output of the measurement.
+
+### NOT Gate
+
+As was mentioned before, an X gate can be considered a NOT gate.
+
+```
+# Create a Quantum Circuit with 1 quantum register and 1 classical register
+q = QuantumRegister(1)
+c = ClassicalRegister(1)
+qc = QuantumCircuit(q,c)
+qc.x(q[0])
+qc.measure(q[0], c[0])    # Map the quantum measurement to the classical bits
+qc.draw(output='mpl')
+```
+
+### AND Gate
+
+With a CCX gate, the result of an AND gate for two control bits will be output to its target bit.
+
+```
+q = QuantumRegister(3)
+c = ClassicalRegister(1)
+qc = QuantumCircuit(q,c)
+qc.ccx(q[0], q[1], q[2])
+qc.measure(q[2], c[0])
+qc.draw(output='mpl')
+```
+
+### NAND Gate
+
+A NAND gate can be made by applying a NOT gate after applying an AND gate.
+
+```
+q = QuantumRegister(3)
+c = ClassicalRegister(1)
+qc = QuantumCircuit(q,c)
+qc.ccx(q[0], q[1], q[2])
+qc.x(q[2])
+qc.measure(q[2], c[0])
+qc.draw(output='mpl')
+```
+
+### OR Gate
+
+```
+q = QuantumRegister(3)
+c = ClassicalRegister(1)
+qc = QuantumCircuit(q,c)
+
+qc.cx(q[1], q[2])
+qc.cx(q[0], q[2])
+qc.ccx(q[0], q[1], q[2])
+qc.measure(q[2], c[0])
+qc.draw(output='mpl')
+```
+
+### XOR Gate
+
+```
+q = QuantumRegister(3)
+c = ClassicalRegister(1)
+qc = QuantumCircuit(q,c)
+qc.cx(q[1], q[2])
+qc.cx(q[0], q[2])
+qc.measure(q[2], c[0])
+qc.draw(output='mpl')
+```
+
+### NOR Gate
+
+```
+q = QuantumRegister(3)
+c = ClassicalRegister(1)
+qc = QuantumCircuit(q,c)
+
+qc.cx(q[1], q[2])
+qc.cx(q[0], q[2])
+qc.ccx(q[0], q[1], q[2])
+qc.x(q[2])
+qc.measure(q[2], c[0])
+qc.draw(output='mpl')
+```
+
+## Adder
+
+An adder is a digital logic circuit that performs addition of numbers.
+In this example, we are going to take a look at the simplest adders, namely half adder and full adder.
+
+### Half Adder
+
+The half adder is used to add together the two least significant digits in a binary sum. It has two single binary inputs, called A and B, and two outputs C (carry out) and S (sum). The output C will be used as an input to the Full Adder, which will be explained later, for obtaining the value in the higher digit.
+
+From the truth table, you should notice that the carry output, C, is a result of operating an AND gate against A and B, where the output S is a result of operating an XOR against A and B. As we have already created the AND and XOR gates, we can combine these gates and create a half adder as follows.
+
+We denote our quantum register as 'q', classical registers as 'c', assign inputs A and B to q[0] and q[1], the sum output S and carry output C to q[2] and q[3].
+
+```
+```
+
+```
+```
+
+```
+```
+
+```
+```
+
+```
+```
+
+```
+```
+
+```
+```
+
+```
+```
