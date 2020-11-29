@@ -211,7 +211,92 @@ qc.measure(q[2], c[0])
 qc.draw(output='mpl')
 ```
 
-## Adder
+## IMPORTANT: How to calculate Quantum Costs using an Unroller
+
+There are several ways to evaluate an efficiency of a program (quantum circuit). Such as:
+
+* Number of quantum bits
+* Depth
+* Program execution speed (Runtime)
+* Number of instructions
+
+These are all important factors that impact the results and throughput of quantum computation. In this particular challenge, we will use the number of instructions to evaluate the efficiency of our program. We will call the number of instructions "cost" throughout this challenge and will use the following formula to evaluate the cost of a circuit.
+
+Cost = Single-qubit gates + CX gates×10
+
+Any given quantum circuit can be decomposed into single-qubit gates (an instruction given to a single qubit) and two-qubit gates. With the current Noisy Intermediate-Scale Quantum (NISQ) devices, CX gate error rates are generally 10x higher than a single qubit gate. Therefore, we will weigh CX gates 10 times more than a single-qubit gate for cost evaluation.
+
+You can evaluate gate costs by yourself by using a program called "Unroller". To elaborate on this, let's take a look at the example below.
+
+### Example 1
+```
+import numpy as np
+from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
+from qiskit import BasicAer, execute
+from qiskit.quantum_info import Pauli, state_fidelity, process_fidelity
+
+q = QuantumRegister(4, 'q0')
+c = ClassicalRegister(1, 'c0')
+qc = QuantumCircuit(q, c)
+qc.ccx(q[0], q[1], q[2])
+qc.cx(q[3], q[1])
+qc.h(q[3])
+qc.ccx(q[3], q[2], q[1])
+qc.measure(q[3],c[0])
+qc.draw(output='mpl')
+```
+Count the number of operations:
+```
+qc.count_ops()
+```
+OrderedDict([('ccx', 2), ('cx', 1), ('h', 1), ('measure', 1)])
+
+As you can see, this quantum circuit contains a Hadamard gate, a CX gate and CCX gates. By using qiskit.transpiler and importing PassManager, we can decompose this circuit into gates specified by the Unroller as shown below. In this case, into U3 gates and CX gates.
+
+```
+from qiskit.transpiler import PassManager
+from qiskit.transpiler.passes import Unroller
+pass_ = Unroller(['u3', 'cx'])
+pm = PassManager(pass_)
+new_circuit = pm.run(qc) 
+new_circuit.draw(output='mpl')
+```
+Count the number of operations:
+```
+new_circuit.count_ops()
+```
+OrderedDict([('u3', 19), ('cx', 13), ('measure', 1)])
+
+Thus, the cost of this circuit is 19+13×10=149.
+
+You can easily check how any arbitrary gate can be decomposed by using the Unroller.
+
+### Example 2
+
+In the example below, we used the Unroller to decompose a CCX gate into U3 gates and CX gates.
+```
+q = QuantumRegister(3, 'q0')
+c = ClassicalRegister(1, 'c0')
+qc = QuantumCircuit(q, c)
+qc.ccx(q[0], q[1], q[2])
+qc.draw(output='mpl')
+```
+Using the Unroller:
+```
+pass_ = Unroller(['u3', 'cx'])
+pm = PassManager(pass_)
+new_circuit = pm.run(qc) 
+new_circuit.draw(output='mpl')
+```
+Count the number of operations:
+```
+new_circuit.count_ops()
+```
+OrderedDict([('u3', 9), ('cx', 6)])
+
+So, the total cost of a CCX gate can be calculated as 9+6×10=69.
+
+## Adders
 
 An adder is a digital logic circuit that performs addition of numbers.
 In this example, we are going to take a look at the simplest adders, namely half adder and full adder.
@@ -225,20 +310,38 @@ From the truth table, you should notice that the carry output, C, is a result of
 We denote our quantum register as 'q', classical registers as 'c', assign inputs A and B to q[0] and q[1], the sum output S and carry output C to q[2] and q[3].
 
 ```
+#Define registers and a quantum circuit
+q = QuantumRegister(4)
+c = ClassicalRegister(2)
+qc = QuantumCircuit(q,c)
+
+#XOR
+qc.cx(q[1], q[2])
+qc.cx(q[0], q[2])
+qc.barrier()
+
+#AND
+qc.ccx(q[0], q[1], q[3])
+qc.barrier()
+
+#Sum
+qc.measure(q[2], c[0])
+#Carry out
+qc.measure(q[3], c[1])
+
+backend = Aer.get_backend('qasm_simulator')
+job = execute(qc, backend, shots=1000)
+result = job.result()
+count =result.get_counts()
+print(count)
+qc.draw(output='mpl')
 ```
 
-```
-```
+### Full Adder
 
-```
-```
+The full adder takes two binary numbers plus an overflow bit, which we will call X, as its input. Create a full adder with input data:
 
-```
-```
-
-```
-```
-
+𝐴=1, 𝐵=0, 𝑋=1 .
 ```
 ```
 
