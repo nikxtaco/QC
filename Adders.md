@@ -340,38 +340,46 @@ qc.draw(output='mpl')
 ### Full Adder
 
 The full adder takes two binary numbers plus an overflow bit, which we will call X, as its input. Create a full adder with input data:
-
-𝐴=1, 𝐵=0, 𝑋=1 .
+𝐴=1, 𝐵=0, 𝑋=1.
 ```
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
 from qiskit import IBMQ, Aer, execute
 
 ##### build your quantum circuit here
 #Define registers and a quantum circuit
-q = QuantumRegister(9)
+q = QuantumRegister(10)
 c = ClassicalRegister(2)
 qc = QuantumCircuit(q,c)
 
-#XOR x2
-qc.cx(q[0], q[3])
-qc.cx(q[1], q[3])
+# Assigning Input Data
+qc.x(q[0])
+qc.x(q[2])
+
+#XOR first two inputs in q[5]
+qc.cx(q[0], q[5])
+qc.cx(q[1], q[5])
 qc.barrier()
+
+#XOR result and third input in q[3]
 qc.cx(q[2], q[3])
-qc.cx(q[3], q[3])
+qc.cx(q[5], q[3])
 qc.barrier()
 
-#Atleast 2 of 3
-qc.ccx(q[0], q[1], q[5])
-qc.ccx(q[1], q[2], q[6])
-qc.ccx(q[0], q[2], q[7])
-#OR
-qc.cx(q[5], q[8])
-qc.cx(q[6], q[8])
-qc.ccx(q[5], q[6], q[8])
+#AND every two set of inputs in q[6], q[7] & q[8]
+qc.ccx(q[0], q[1], q[6])
+qc.ccx(q[1], q[2], q[7])
+qc.ccx(q[0], q[2], q[8])
+qc.barrier()
 
+#OR the first two AND results in q[9]
+qc.cx(q[6], q[9])
+qc.cx(q[7], q[9])
+qc.ccx(q[6], q[7], q[9])
+
+#OR the previous result & the third result in q[4]
+qc.cx(q[9], q[4])
 qc.cx(q[8], q[4])
-qc.cx(q[7], q[4])
-qc.ccx(q[8], q[7], q[4])
+qc.ccx(q[9], q[8], q[4])
 qc.barrier()
 
 #Sum
