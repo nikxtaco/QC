@@ -343,6 +343,49 @@ The full adder takes two binary numbers plus an overflow bit, which we will call
 
 𝐴=1, 𝐵=0, 𝑋=1 .
 ```
+from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
+from qiskit import IBMQ, Aer, execute
+
+##### build your quantum circuit here
+#Define registers and a quantum circuit
+q = QuantumRegister(9)
+c = ClassicalRegister(2)
+qc = QuantumCircuit(q,c)
+
+#XOR x2
+qc.cx(q[0], q[3])
+qc.cx(q[1], q[3])
+qc.barrier()
+qc.cx(q[2], q[3])
+qc.cx(q[3], q[3])
+qc.barrier()
+
+#Atleast 2 of 3
+qc.ccx(q[0], q[1], q[5])
+qc.ccx(q[1], q[2], q[6])
+qc.ccx(q[0], q[2], q[7])
+#OR
+qc.cx(q[5], q[8])
+qc.cx(q[6], q[8])
+qc.ccx(q[5], q[6], q[8])
+
+qc.cx(q[8], q[4])
+qc.cx(q[7], q[4])
+qc.ccx(q[8], q[7], q[4])
+qc.barrier()
+
+#Sum
+qc.measure(q[3], c[0])
+#Carry out
+qc.measure(q[4], c[1])
+
+# execute the circuit by qasm_simulator
+backend = Aer.get_backend('qasm_simulator')
+job = execute(qc, backend, shots=1000)
+result = job.result()
+count =result.get_counts()
+print(count)
+qc.draw(output='mpl')
 ```
 
 ```
