@@ -96,7 +96,19 @@ def week2b_ans_func(lightout4):
         qc.mct(tile[0:9], oracle[0])
         qc.x(tile[0:9])
         
-        # counter
+        # U^dagger of flip_tile function is flip_tile itself.
+        flip_tile(qc,flip,tile)
+
+        # diffusion
+        qc.h(flip)
+        qc.x(flip)
+        qc.h(flip[8])
+        qc.mct(flip[0:8], flip[8])
+        qc.h(flip[8])
+        qc.x(flip)
+        qc.h(flip)
+        
+    # counter
         
         for i in range (len(flip)):
             qc.mct([flip[i],auxiliary[0],auxiliary[1],auxiliary[2]],auxiliary[3],mode='noancilla')
@@ -104,12 +116,21 @@ def week2b_ans_func(lightout4):
             qc.ccx(flip[i],auxiliary[0],auxiliary[1])
             qc.cx(flip[i],auxiliary[0])
             
-        for i in range (len(flip)):
-            qc.cx(flip[i],auxiliary[0])
-            qc.ccx(flip[i],auxiliary[0],auxiliary[1])
-            qc.mct([flip[i],auxiliary[0],auxiliary[1]],auxiliary[2],mode='noancilla')
-            qc.mct([flip[i],auxiliary[0],auxiliary[1],auxiliary[2]],auxiliary[3],mode='noancilla')
+#         for i in range (len(flip)):
+#             qc.cx(flip[i],auxiliary[0])
+#             qc.ccx(flip[i],auxiliary[0],auxiliary[1])
+#             qc.mct([flip[i],auxiliary[0],auxiliary[1]],auxiliary[2],mode='noancilla')
+#             qc.mct([flip[i],auxiliary[0],auxiliary[1],auxiliary[2]],auxiliary[3],mode='noancilla')
         qc.barrier()
+    
+    # the number of iterations is 18 for 3x3 grid
+    for i in range(18):
+        # oracle
+        flip_tile(qc,flip,tile)
+        # all_zero check
+        qc.x(tile[0:9])
+        qc.mct(tile[0:9], oracle[0])
+        qc.x(tile[0:9])
         
         # U^dagger of flip_tile function is flip_tile itself.
         flip_tile(qc,flip,tile)
