@@ -56,33 +56,33 @@ def week2b_ans_func(lightout4):
     ##Qram part
 
     # address 0 
-    if(address[0]==0 && address[1]==0):
+    if(address[0]==0 and address[1]==0):
         j=0
-        for i in range lightsout4[0]:
+        for i in lightsout4[0]:
                 qc.cx(i,tile[j])
                 j+=1
     qc.barrier()
 
     # address 1 
-    if(address[0]==0 && address[1]==1):
+    if(address[0]==0 and address[1]==1):
         j=0
-        for i in range lightsout4[1]:
+        for i in lightsout4[1]:
                 qc.cx(i,tile[j])
                 j+=1
     qc.barrier()
 
     # address 2 
-    if(address[0]==1 && address[1]==0):
+    if(address[0]==1 and address[1]==0):
         j=0
-        for i in range lightsout4[2]:
+        for i in lightsout4[2]:
                 qc.cx(i,tile[j])
                 j+=1
     qc.barrier()
     
     # address 3 
-    if(address[0]==1 && address[1]==1):
+    if(address[0]==1 and address[1]==1):
         j=0
-        for i in range lightsout4[3]:
+        for i in lightsout4[3]:
                 qc.cx(i,tile[j])
                 j+=1
     qc.barrier()
@@ -132,33 +132,33 @@ def week2b_ans_func(lightout4):
     ## Reverse Qram part
 
     # address 3 
-    if(address[0]==1 && address[1]==1):
+    if(address[0]==1 and address[1]==1):
         j=0
-        for i in range lightsout4[3]:
+        for i in lightsout4[3]:
                 qc.cx(i,tile[j])
                 j+=1
     qc.barrier()
 
     # address 2 
-    if(address[0]==1 && address[1]==0):
+    if(address[0]==1 and address[1]==0):
         j=0
-        for i in range lightsout4[2]:
+        for i in lightsout4[2]:
                 qc.cx(i,tile[j])
                 j+=1
     qc.barrier()
 
     # address 1 
-    if(address[0]==0 && address[1]==1):
+    if(address[0]==0 and address[1]==1):
         j=0
-        for i in range lightsout4[1]:
+        for i in lightsout4[1]:
                 qc.cx(i,tile[j])
                 j+=1
     qc.barrier()
 
     # address 0 
-    if(address[0]==0 && address[1]==0):
+    if(address[0]==0 and address[1]==0):
         j=0
-        for i in range lightsout4[0]:
+        for i in lightsout4[0]:
                 qc.cx(i,tile[j])
                 j+=1
     qc.barrier()
@@ -179,12 +179,4 @@ def week2b_ans_func(lightout4):
     # Reverse the output string.
     qc = qc.reverse_bits()
 
-    #backend = provider.get_backend('ibmq_qasm_simulator')
-    backend = Aer.get_backend('qasm_simulator')
-    job = execute(qc, backend=backend, shots=80000, seed_simulator=12345, backend_options={"fusion_enable":True})
-    result = job.result()
-    count =result.get_counts()
-    print(count)
-
-    qc.draw(output='mpl')
     return qc
