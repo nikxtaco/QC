@@ -44,7 +44,7 @@ def week2b_ans_func(lightout4):
     oracle = QuantumRegister(1)
     result = ClassicalRegister(2)
     auxiliary = QuantumRegister(4)
-    qc = QuantumCircuit(address,tile,flip,data,oracle,result)
+    qc = QuantumCircuit(address,tile,flip,data,oracle,result,auxiliary)
     
     # initilizing values & address preparation
     qc.h([address[0],address[1]])
@@ -97,18 +97,16 @@ def week2b_ans_func(lightout4):
         qc.x(tile[0:9])
         
         # counter
-        qc.x(data[1])
-        qc.mct([data[0], data[1], data[2]], oracle[0], mode='noancilla')
         
         for i in range (len(flip)):
             qc.mct([flip[i],auxiliary[0],auxiliary[1],auxiliary[2]],auxiliary[3],mode='noancilla')
             qc.mct([flip[i],auxiliary[0],auxiliary[1]],auxiliary[2],mode='noancilla')
-            qc.ccx([flip[i],auxiliary[0]],auxiliary[1])
+            qc.ccx(flip[i],auxiliary[0],auxiliary[1])
             qc.cx(flip[i],auxiliary[0])
             
         for i in range (len(flip)):
             qc.cx(flip[i],auxiliary[0])
-            qc.ccx([flip[i],auxiliary[0]],auxiliary[1])
+            qc.ccx(flip[i],auxiliary[0],auxiliary[1])
             qc.mct([flip[i],auxiliary[0],auxiliary[1]],auxiliary[2],mode='noancilla')
             qc.mct([flip[i],auxiliary[0],auxiliary[1],auxiliary[2]],auxiliary[3],mode='noancilla')
         qc.barrier()
@@ -163,15 +161,6 @@ def week2b_ans_func(lightout4):
                 j+=1
     qc.barrier()
 
-    
-    #diffusion
-    qc.h(address[:2])
-    qc.x(address[:2])
-    qc.h(address[1])
-    qc.cx(address[0], address[1])
-    qc.h(address[1])
-    qc.x(address[:2])
-    qc.h(address[:2])
 
     #Measure the address
     qc.measure(address[0:2], result[0:2])
