@@ -131,6 +131,7 @@ def week2b_ans_func(lightout4):
 #             qc.ccx(flip[i],auxiliary[0],auxiliary[1])
 #             qc.mct([flip[i],auxiliary[0],auxiliary[1]],auxiliary[2],mode='noancilla')
 #             qc.mct([flip[i],auxiliary[0],auxiliary[1],auxiliary[2]],auxiliary[3],mode='noancilla')
+# ...only convert aux bits back to 0 state
         qc.barrier()
     
     # the number of iterations is 18 for 3x3 grid
