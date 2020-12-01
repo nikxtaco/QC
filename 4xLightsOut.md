@@ -4,9 +4,9 @@
 
 ## Unfinished code...
 
+
+
 ```
-
-
 
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
 
@@ -200,3 +200,4 @@ def week2b_ans_func(lightout4):
     qc = qc.reverse_bits()
 
     return qc
+```
